@@ -1,23 +1,49 @@
-/* main.c
- * DisPel 65816 Disassembler
- * James Churchill
- * Created 20000924
- */
-
-
-using Microsoft.VisualBasic.Devices;
-using System;
+// ************************************************************************************************************************************************
+// main.c
+// DisPel 65816 Disassembler
+// James Churchill
+// Created 20000924
+//					
+// Port to C# by Mike Dailly 31/3/24
+// ************************************************************************************************************************************************
+using SNESDisassembler;
 using System.Text;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
 
 class SNESDissassembler
 {
+    /// <summary>Disassembler listing</summary>
     public StringBuilder Dissassembly { get; set; } = new StringBuilder();
+
+    /// <summary>Disassembler segments</summary>
     public List<List<string>> Segments{ get; set; } = new List<List<string>>();
 
-    Dissassemble65816 disasm = new Dissassemble65816();
+	/// <summary>65816 Disassembler</summary>
+	Dissassemble65816 disasm;
+
+	/// <summary>Global symbol manager</summary>
+	public SymbolManager Symbols;
 
 
+    // ******************************************************************************************************************
+    /// <summary>
+    ///		Create a new disassembler
+    /// </summary>
+    /// <param name="SymbolManager">A global symbol manager</param>
+    // ******************************************************************************************************************
+    public SNESDissassembler(SymbolManager SymbolManager)
+	{
+		Symbols = SymbolManager;
+        disasm = new Dissassemble65816(SymbolManager);
+    }
+
+    // ******************************************************************************************************************
+    /// <summary>
+    ///		Dump usage
+    /// </summary>
+    /// <returns>
+	///		command line usage as a string
+	/// </returns>
+    // ******************************************************************************************************************
     string usage()
 	{
 		return "\nDisPel v1 by James Churchill/pelrun (C)2001-2011\n" +
@@ -45,7 +71,7 @@ class SNESDissassembler
 
 	/* Snes9x Hi/LoROM autodetect code */
 
-	int AllASCII(byte[] b, int index, int size)
+int AllASCII(byte[] b, int index, int size)
 	{
 		int i;
 		for (i = 0; i < size; i++)

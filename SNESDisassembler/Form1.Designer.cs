@@ -36,6 +36,9 @@
             // 
             // DisassemblyGroup
             // 
+            this.DisassemblyGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.DisassemblyGroup.Controls.Add(this.SourceData);
             this.DisassemblyGroup.Location = new System.Drawing.Point(9, 29);
             this.DisassemblyGroup.Name = "DisassemblyGroup";
@@ -46,6 +49,9 @@
             // 
             // SourceData
             // 
+            this.SourceData.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.SourceData.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.SourceData.Location = new System.Drawing.Point(8, 22);
             this.SourceData.Name = "SourceData";

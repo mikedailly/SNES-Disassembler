@@ -4,13 +4,19 @@ namespace SNESDisassembler
 {
     internal static class Program
     {
+        public static SymbolManager Symbols;
+
         /// <summary>
         ///  The main entry point for the application.
         /// </summary>
         [STAThread]
         static void Main()
         {
-            SNESDissassembler snes = new SNESDissassembler();
+            Symbols = new SymbolManager();
+            DefaultSymbols.Init(Symbols);
+            DefaultSymbols.AddDefaults();
+
+            SNESDissassembler snes = new SNESDissassembler(Symbols);
             string[] args =
                 {
                     "snes.exe",

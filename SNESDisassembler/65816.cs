@@ -7,12 +7,25 @@
 //					
 // Port to C# by Mike Dailly 31/3/24
 //
+// 
+//			Flags stored in P Register
+//	Mnemonic	Value		Binary Value	Description
+//	N			#$80		10000000		Negative
+//	V			#$40		01000000		Overflow
+//	M			#$20		00100000		Accumulator register size (native mode only), (0 = 16-bit, 1 = 8-bit)
+//	X			#$10		00010000		Index register size (native mode only), (0 = 16-bit, 1 = 8-bit)
+//	D			#$08		00001000		Decimal
+//	I			#$04		00000100		IRQ disable
+//	Z			#$02		00000010		Zero
+//	C			#$01		00000001		Carry
+//	E			6502 emulation mode
+//	B			#$10		00010000		Break (emulation mode only)
+//
 // ************************************************************************************************************************************************
 
-
-
-
+using SNESDisassembler;
 using System.Text;
+
 
 // ************************************************************************************************************************************************
 /// <summary>
@@ -29,8 +42,16 @@ public enum eDissassemblyOptions
     SplitFunctions = 2
 }
 
+
 public class Dissassemble65816
 {
+	SymbolManager Symbols;
+
+    public Dissassemble65816(SymbolManager manager)
+	{
+		Symbols = manager;
+    }
+
     // ************************************************************************************************************************************************
     /// <summary>
     ///		disassembles a single instruction
@@ -641,7 +662,7 @@ public class Dissassemble65816
 			case 0xED:
 			case 0xEE:
 				{
-					pbuf.Append(string.Format("${0:X4}", ((int)mem[1]) + ((int)mem[2]) * 256));
+					pbuf.Append( Symbols.Lookup( ((int)mem[1]) + ((int)mem[2]) * 256, 4) );
 					offset = 3;
 					break;
 				}
