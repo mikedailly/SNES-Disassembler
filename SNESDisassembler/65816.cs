@@ -42,15 +42,16 @@ public class Dissassemble65816
     /// <param name="tsrc">1 if addresses/hex dump is to be suppressed</param>
     /// <returns>number of bytes to advance, or 0 for error</returns>
     // ************************************************************************************************************************************************
-    public int disasm(byte[] mem, Int64 pos, ref byte flag, StringBuilder inst, eDissassemblyOptions tsrc)
+    public int disasm(byte[] mem, Int64 pos, ref byte flag, StringBuilder inst, eDissassemblyOptions tsrc, out List<string> segments)
 	{
 		// temp buffers to hold instruction,parameters and hex
 		StringBuilder ibuf = new StringBuilder(128);
 		StringBuilder pbuf = new StringBuilder(128);
 		StringBuilder hbuf = new StringBuilder(128);
+		segments = new List<string>();
 
-		// variables to hold the instruction increment and signed params
-		int offset, sval, i;
+        // variables to hold the instruction increment and signed params
+        int offset, sval, i;
 
 		// Parse out instruction mnemonic
 
@@ -985,7 +986,7 @@ public class Dissassemble65816
 			case 0xF4:
 				{
 					pbuf.Append(string.Format("${0:X4}", ((int)mem[1]) + (((int)mem[2]) * 256)));
-					offset = 2;
+					offset = 3;
 					break;
 				}
 			// Stack (Direct Page Indirect)
@@ -1023,7 +1024,7 @@ public class Dissassemble65816
 			case 0xC2:
 				// REP following
 				{
-					flag = (byte)((int)flag & (int)~mem[1]);
+					flag = (byte)((int)flag & ~mem[1]);
 					pbuf.Append(string.Format("#${0:X2}", (int)mem[1]));
 					offset = 2;
 					break;
@@ -1031,7 +1032,7 @@ public class Dissassemble65816
 			case 0xE2:
 				// SEP following
 				{
-					flag = (byte)((int)flag | (int)mem[1]);
+					flag = (byte)((int)flag | mem[1]);
 					pbuf.Append(string.Format("#${0:X2}", (int)mem[1]));
 					offset = 2;
 					break;
@@ -1063,7 +1064,7 @@ public class Dissassemble65816
 			case 0xA2:
 			case 0xC0:
 			case 0xE0:
-				if (((flag) & 0x10) == 0)
+				if (((flag) & 0x10) != 0)
 				{
 					// 8Bit index reg
 					pbuf.Append(string.Format("#${0:X2}", (int)mem[1]));
@@ -1096,10 +1097,21 @@ public class Dissassemble65816
 		if ((tsrc & eDissassemblyOptions.DontOutputAddress) == 0)
 		{
 			inst.Append(string.Format("{0:X2}{1:X4}:\t{2}\t{3} {4}", (pos >> 16) & 0xFF, pos & 0xFFFF, hbuf.ToString(), ibuf.ToString(), pbuf.ToString()));
-		}
-		else
+			string add = string.Format("{0:X2}{1:X4}", (pos >> 16) & 0xFF, pos & 0xFFFF);
+
+			segments.Add(add);
+            segments.Add(hbuf.ToString());
+            segments.Add(ibuf.ToString());
+            segments.Add(pbuf.ToString());
+        }
+        else
 		{
-			inst.Append(ibuf.ToString());
+			segments.Add("");
+            segments.Add("");
+            segments.Add(ibuf.ToString());
+            segments.Add(pbuf.ToString());
+
+            inst.Append(ibuf.ToString());
 			inst.Append(" ");
 			inst.Append(pbuf.ToString());
 		}

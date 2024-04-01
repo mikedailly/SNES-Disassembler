@@ -12,7 +12,11 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
 
 class SNESDissassembler
 {
-	Dissassemble65816 disasm = new Dissassemble65816();
+    public StringBuilder Dissassembly { get; set; } = new StringBuilder();
+    public List<List<string>> Segments{ get; set; } = new List<List<string>>();
+
+    Dissassemble65816 disasm = new Dissassemble65816();
+
 
     string usage()
 	{
@@ -331,7 +335,7 @@ class SNESDissassembler
 		end &= 0x3FFFFF;
 
 
-		start = 0x018000;
+		start = 0x18000;
         end = 0x38000;
 
 		// Autodetect shadow
@@ -431,10 +435,12 @@ class SNESDissassembler
 			//memcpy(dmem, data+rpos, 4);
 
 			// disassemble one instruction, or produce one line of hexdump
-			if (dwidth == 0)
+			List<string> segments = new List<string>();
+            if (dwidth == 0)
 			{
-				offset = disasm.disasm(dmem, pos, ref flag, inst, tsrc);
-			}
+				offset = disasm.disasm(dmem, pos, ref flag, inst, tsrc, out segments);
+				Segments.Add(segments);
+            }
 			else
 			{
 				offset = hexdump(data, pos, rpos, len, inst, dwidth);
@@ -495,9 +501,8 @@ class SNESDissassembler
 			rpos += offset;
 		}
 
-		//fclose(fout);
-
-		return 0;
+        Dissassembly = inst;
+        return 0;
 	}
 }
 
